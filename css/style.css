@@ -86,9 +86,10 @@ button.secondary { background: transparent; color: var(--text); }
 
 table { width: 100%; border-collapse: collapse; }
 th, td { padding: 6px; border-bottom: 1px solid var(--border); text-align: left; }
-.plan th:first-child { width: 2.5em; }
+.plan thead th:first-child { width: 2.5em; }
 .plan select { width: 100%; min-width: 0; font-size: 0.85rem; }
 .plan td { width: 31%; }
+.plan .slot { display: none; }
 .num { text-align: right; font-variant-numeric: tabular-nums; }
 
 .inventory {
@@ -114,6 +115,7 @@ tr.ng { background: var(--ng-bg); }
   margin-bottom: 10px;
 }
 .alert p { margin: 2px 0; }
+.alert .meal-labels { color: var(--muted); font-size: 0.85rem; }
 .alert .ng { font-weight: 600; }
 .sub-title { margin-top: 6px !important; }
 .subs { margin: 2px 0; padding-left: 1.2em; }
@@ -131,6 +133,14 @@ tr.ng { background: var(--ng-bg); }
 footer { padding-bottom: 32px; }
 
 @media (max-width: 520px) {
-  .plan select { font-size: 0.75rem; padding: 4px; }
   th, td { padding: 4px; }
+
+  /* 予定表は1日ずつ、朝昼夜を縦に並べて料理名を省略させない */
+  .plan thead { display: none; }
+  .plan tr { display: block; padding: 6px 0; border-bottom: 1px solid var(--border); }
+  .plan th, .plan td { display: flex; align-items: center; gap: 8px; width: auto; border: 0; }
+  .plan tbody th { display: block; width: auto; font-size: 0.95rem; }
+  .plan tbody th::after { content: "曜日"; }
+  .plan .slot { display: inline; flex: 0 0 1.5em; color: var(--muted); font-size: 0.85rem; }
+  .plan select { flex: 1; }
 }

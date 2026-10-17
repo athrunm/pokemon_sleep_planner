@@ -88,6 +88,29 @@
       .slice(0, limit || 5);
   }
 
+  // 問題のある食を「同じ料理・同じ鍋容量・同じ不足内容」ごとにまとめる（予定順を保つ）
+  function groupAlerts(meals) {
+    const groups = [];
+    const byKey = {};
+    for (const m of meals) {
+      if (!m.recipe || !(isShort(m) || m.overCapacity)) continue;
+      const key = [m.recipe.id, m.capacity, m.overCapacity, JSON.stringify(m.shortages)].join("|");
+      if (!byKey[key]) {
+        byKey[key] = { recipe: m.recipe, size: m.size, capacity: m.capacity, overCapacity: m.overCapacity, shortages: m.shortages, meals: [] };
+        groups.push(byKey[key]);
+      }
+      byKey[key].meals.push(m);
+    }
+    return groups;
+  }
+
+  // グループ内のどの食でも作れる代わりの料理
+  function groupSubstitutes(group, shortIngredientIds, recipes, category, limit) {
+    const [first, ...rest] = group.meals.map((m) => substitutes(m, shortIngredientIds, recipes, category, Infinity));
+    const restIds = rest.map((list) => new Set(list.map((r) => r.id)));
+    return first.filter((r) => restIds.every((ids) => ids.has(r.id))).slice(0, limit || 5);
+  }
+
   // 予定で使わない余り食材と、バッグの使用状況
   function leftovers(balanceRows, bagCapacity) {
     const used = balanceRows.reduce((a, r) => a + r.stock, 0);
@@ -96,7 +119,7 @@
     return { used, capacity: bagCapacity, free: bagCapacity - used, surplus };
   }
 
-  const Calc = { DAYS, SLOTS, mealLabel, potCapacity, recipeSize, indexRecipes, requiredTotals, balance, simulate, isShort, substitutes, leftovers };
+  const Calc = { DAYS, SLOTS, mealLabel, potCapacity, recipeSize, indexRecipes, requiredTotals, balance, simulate, isShort, substitutes, groupAlerts, groupSubstitutes, leftovers };
   if (typeof module !== "undefined" && module.exports) module.exports = Calc;
   else root.Calc = Calc;
 })(this);

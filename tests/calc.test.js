@@ -89,6 +89,33 @@
     eq(Calc.substitutes(meals[0], ["apple"], recipes, "curry", 5).map((r) => r.id), ["mix"]);
   });
 
+  test("groupAlerts: 同じ料理・容量・不足内容の食をまとめる", () => {
+    // 平日の big は容量オーバー、在庫 egg 40 で3食目から不足、日曜は容量内
+    const p = new Array(21).fill(null);
+    p[0] = p[1] = p[2] = p[3] = "big";
+    p[18] = "big";
+    const meals = Calc.simulate(p, { egg: 40, milk: 999 }, byId, settings);
+    const groups = Calc.groupAlerts(meals);
+    eq(groups.map((g) => [g.meals.map((m) => m.index), g.overCapacity, g.shortages]), [
+      [[0, 1], true, {}],
+      [[2, 3], true, { egg: 20 }],
+      [[18], false, { egg: 20 }],
+    ]);
+  });
+
+  test("groupSubstitutes: グループ内のすべての食で作れる料理だけ", () => {
+    const p = new Array(21).fill(null);
+    p[0] = p[1] = "a7";
+    // 1食目の時点ではミルク7あり、2食目の時点でもミルク7あり → m7 は両方で作れる
+    const meals = Calc.simulate(p, { apple: 0, milk: 7 }, byId, settings);
+    const group = Calc.groupAlerts(meals)[0];
+    eq(group.meals.length, 2);
+    eq(Calc.groupSubstitutes(group, ["apple"], recipes, "curry", 5).map((r) => r.id), ["m7", "mix"]);
+    // ミルクが足りない食が混ざると m7 は外れる
+    const short = Object.assign({}, group, { meals: [group.meals[0], Object.assign({}, group.meals[1], { before: { milk: 3 } })] });
+    eq(Calc.groupSubstitutes(short, ["apple"], recipes, "curry", 5).map((r) => r.id), ["mix"]);
+  });
+
   test("leftovers: バッグ使用量と余り食材", () => {
     const rows = Calc.balance({ apple: 7 }, { apple: 10, milk: 20 }, ingredients);
     const info = Calc.leftovers(rows, 25);

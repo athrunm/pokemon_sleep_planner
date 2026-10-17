@@ -87,7 +87,7 @@
           state.plan[index] = select.value || null;
           update();
         });
-        row.append(el("td", {}, select));
+        row.append(el("td", {}, [el("span", { class: "slot", text: Calc.SLOTS[s] }), select]));
       }
       body.append(row);
     });
@@ -191,22 +191,22 @@
   function renderAlerts(meals, shortIds) {
     const box = $("alerts");
     box.replaceChildren();
-    const problems = meals.filter((m) => m.recipe && (Calc.isShort(m) || m.overCapacity));
-    if (problems.length === 0) {
+    const groups = Calc.groupAlerts(meals);
+    if (groups.length === 0) {
       box.append(el("p", { class: "empty", text: "問題のある食はありません。" }));
       return;
     }
-    box.append(el("p", { class: "note", text: "代わりの料理は1食ずつ判定しています。複数の食で同じ料理に置き換える場合は、予定を変えて再確認してください。" }));
-    for (const m of problems) {
-      const lines = [];
-      if (m.overCapacity) {
-        lines.push(el("p", { class: "ng", text: "鍋の容量オーバー: 必要 " + m.size + " 個 / 容量 " + m.capacity + " 個" }));
+    box.append(el("p", { class: "note", text: "同じ料理で同じ問題の食はまとめて表示します。代わりの料理は1食ずつ判定しているので、複数の食で同じ料理に置き換える場合は、予定を変えて再確認してください。" }));
+    for (const g of groups) {
+      const lines = [el("p", { class: "meal-labels", text: g.meals.map((m) => m.label).join("、") })];
+      if (g.overCapacity) {
+        lines.push(el("p", { class: "ng", text: "鍋の容量オーバー: 必要 " + g.size + " 個 / 容量 " + g.capacity + " 個" }));
       }
-      if (Calc.isShort(m)) {
-        const lack = Object.entries(m.shortages).map(([id, n]) => ingredientsById[id].name + " " + n + "個");
-        lines.push(el("p", { class: "ng", text: "不足: " + lack.join("、") }));
+      if (Object.keys(g.shortages).length) {
+        const lack = Object.entries(g.shortages).map(([id, n]) => ingredientsById[id].name + " " + n + "個");
+        lines.push(el("p", { class: "ng", text: "不足（1食あたり）: " + lack.join("、") }));
       }
-      const subs = Calc.substitutes(m, shortIds, recipes, state.category, 5);
+      const subs = Calc.groupSubstitutes(g, shortIds, recipes, state.category, 5);
       if (subs.length) {
         lines.push(el("p", { class: "sub-title", text: "代わりに作れる料理（不足食材を使わないもの）:" }));
         lines.push(el("ul", { class: "subs" }, subs.map((r) =>
@@ -215,7 +215,7 @@
         lines.push(el("p", { class: "muted", text: "代わりに作れる料理が見つかりません。" }));
       }
       box.append(el("div", { class: "alert" }, [
-        el("h4", { text: m.label + "：" + m.recipe.name }),
+        el("h4", { text: g.recipe.name + "（" + g.meals.length + "食）" }),
         ...lines,
       ]));
     }
