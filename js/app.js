@@ -28,8 +28,11 @@
     return Number.isFinite(n) && n > 0 ? n : 0;
   }
 
+  // 料理の選択肢は必要な食材の個数が多い順（同数ならエナジーが高い順）
   function categoryRecipes() {
-    return recipes.filter((r) => r.category === state.category);
+    return recipes
+      .filter((r) => r.category === state.category)
+      .sort((a, b) => Calc.recipeSize(b) - Calc.recipeSize(a) || b.baseEnergy - a.baseEnergy);
   }
 
   function ingredientText(recipe) {
