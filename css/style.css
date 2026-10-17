@@ -97,7 +97,6 @@ th, td { padding: 6px; border-bottom: 1px solid var(--border); text-align: left;
 .plan tr.today .date { color: var(--accent); font-weight: 600; }
 .plan td.current { background: var(--accent-bg); box-shadow: inset 0 0 0 2px var(--accent); border-radius: 6px; }
 .plan td.current select { border-color: var(--accent); font-weight: 600; }
-.plan .now { display: block; margin-top: 2px; color: var(--accent); font-size: 0.75rem; font-weight: 600; }
 .num { text-align: right; font-variant-numeric: tabular-nums; }
 
 .inventory {
@@ -150,9 +149,6 @@ footer { padding-bottom: 32px; }
   .plan tbody th { display: block; width: auto; font-size: 0.95rem; }
   .plan tbody th .day::after { content: "曜日"; }
   .plan .date { display: inline; margin-left: 6px; font-size: 0.85rem; }
-  .plan td { flex-wrap: wrap; }
-  .plan td.current { padding: 6px; }
-  .plan .now { flex-basis: 100%; margin: 0 0 0 calc(1.5em + 8px); }
   .plan .slot { display: inline; flex: 0 0 1.5em; color: var(--muted); font-size: 0.85rem; }
   .plan select { flex: 1; }
 }

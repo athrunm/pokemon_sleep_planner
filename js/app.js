@@ -106,11 +106,7 @@
       row.querySelector(".date").textContent = (dates[d].getMonth() + 1) + "/" + dates[d].getDate();
       row.classList.toggle("today", d === Math.floor(current / 3));
       row.querySelectorAll("td").forEach((cell, s) => {
-        const isCurrent = d * 3 + s === current;
-        cell.classList.toggle("current", isCurrent);
-        const badge = cell.querySelector(".now");
-        if (isCurrent && !badge) cell.append(el("span", { class: "now", text: "次に作る" }));
-        if (!isCurrent && badge) badge.remove();
+        cell.classList.toggle("current", d * 3 + s === current);
       });
     });
   }
@@ -264,6 +260,4 @@
   bindPlanButtons();
   renderInventory();
   renderResults();
-  // 食事の時間帯が切り替わったら強調も移す
-  setInterval(markCurrentMeal, 60 * 1000);
 })();
