@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ポケスリ料理プランナー</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header>
+    <h1>ポケスリ料理プランナー</h1>
+    <p class="lead">1週間（21食）の料理予定から、必要な食材の過不足を調べます。入力内容はこのブラウザに自動保存されます。</p>
+  </header>
+
+  <main>
+    <section class="card">
+      <h2>設定</h2>
+      <div class="settings">
+        <label>今週の料理
+          <select id="category"></select>
+        </label>
+        <label>鍋の容量
+          <input id="potBase" type="number" min="1" inputmode="numeric">
+        </label>
+        <label>バッグの容量
+          <input id="bagCapacity" type="number" min="0" inputmode="numeric">
+        </label>
+        <label class="check">
+          <input id="campTicket" type="checkbox"> いいキャンプチケット（鍋×1.5）
+        </label>
+      </div>
+      <p class="note">日曜日は鍋の容量が2倍として計算します。</p>
+    </section>
+
+    <section class="card">
+      <h2>料理の予定</h2>
+      <div class="bulk">
+        <select id="bulkRecipe"></select>
+        <button id="bulkApply" type="button">全21食に設定</button>
+        <button id="bulkEmpty" type="button" class="secondary">空の食だけ設定</button>
+        <button id="clearPlan" type="button" class="secondary">予定をクリア</button>
+      </div>
+      <table class="plan">
+        <thead><tr><th></th><th>朝</th><th>昼</th><th>夜</th></tr></thead>
+        <tbody id="planBody"></tbody>
+      </table>
+    </section>
+
+    <section class="card">
+      <h2>手持ちの食材</h2>
+      <div class="bulk">
+        <button id="clearInventory" type="button" class="secondary">在庫をクリア</button>
+      </div>
+      <div id="inventory" class="inventory"></div>
+    </section>
+
+    <section class="card">
+      <h2>結果</h2>
+      <div id="summary" class="summary"></div>
+      <h3>食材の過不足</h3>
+      <table class="balance">
+        <thead><tr><th>食材</th><th>必要</th><th>在庫</th><th>過不足</th></tr></thead>
+        <tbody id="balanceBody"></tbody>
+      </table>
+      <h3>注意が必要な食</h3>
+      <div id="alerts"></div>
+      <h3>余る食材（整理候補）</h3>
+      <div id="leftovers"></div>
+    </section>
+  </main>
+
+  <footer>
+    <p>レシピデータ出典: <a href="https://github.com/SleepAPI/SleepAPI">SleepAPI</a>。ゲームの更新で変わることがあります。</p>
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/calc.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

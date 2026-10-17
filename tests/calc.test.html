@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>calc.js テスト</title>
+  <style>
+    body { font-family: system-ui, sans-serif; padding: 16px; }
+    .ok { color: #1e7d4f; }
+    .ng { color: #c0392b; }
+  </style>
+</head>
+<body>
+  <h1>calc.js テスト</h1>
+  <ul id="out"></ul>
+  <p id="total"></p>
+  <script src="../js/calc.js"></script>
+  <script src="calc.test.js"></script>
+  <script>
+    const out = document.getElementById("out");
+    let passed = 0;
+    for (const r of window.TEST_RESULTS) {
+      const li = document.createElement("li");
+      li.className = r.ok ? "ok" : "ng";
+      li.textContent = (r.ok ? "PASS " : "FAIL ") + r.name + (r.ok ? "" : " — " + r.message);
+      out.append(li);
+      if (r.ok) passed++;
+    }
+    document.getElementById("total").textContent = passed + " / " + window.TEST_RESULTS.length + " passed";
+  </script>
+</body>
+</html>
