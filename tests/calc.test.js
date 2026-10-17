@@ -46,6 +46,24 @@
     eq(Calc.mealLabel(20), "日曜夜");
   });
 
+  test("currentMealIndex: 時間帯と4時の日付切り替え", () => {
+    // 2026-10-12 は月曜日
+    eq(Calc.currentMealIndex(new Date(2026, 9, 12, 4, 0)), 0);
+    eq(Calc.currentMealIndex(new Date(2026, 9, 12, 11, 59)), 0);
+    eq(Calc.currentMealIndex(new Date(2026, 9, 12, 12, 0)), 1);
+    eq(Calc.currentMealIndex(new Date(2026, 9, 12, 18, 0)), 2);
+    eq(Calc.currentMealIndex(new Date(2026, 9, 13, 3, 59)), 2); // 火曜3:59 は月曜夜
+    eq(Calc.currentMealIndex(new Date(2026, 9, 18, 23, 0)), 20); // 日曜夜
+    eq(Calc.currentMealIndex(new Date(2026, 9, 12, 3, 0)), 20); // 月曜3:00 は前週の日曜夜
+  });
+
+  test("weekDates: 月曜始まりの今週の日付", () => {
+    const fmt = (d) => (d.getMonth() + 1) + "/" + d.getDate();
+    eq(Calc.weekDates(new Date(2026, 9, 17, 20, 0)).map(fmt), ["10/12", "10/13", "10/14", "10/15", "10/16", "10/17", "10/18"]);
+    eq(fmt(Calc.weekDates(new Date(2026, 9, 12, 3, 0))[0]), "10/5"); // 月曜4時前は前週
+    eq(Calc.weekDates(new Date(2026, 9, 29, 12, 0)).map(fmt), ["10/26", "10/27", "10/28", "10/29", "10/30", "10/31", "11/1"]);
+  });
+
   test("potCapacity: 平日・日曜・キャンプチケット", () => {
     eq(Calc.potCapacity(15, 0, false), 15);
     eq(Calc.potCapacity(15, 6, false), 30);

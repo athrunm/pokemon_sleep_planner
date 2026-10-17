@@ -81,7 +81,7 @@
     const body = $("planBody");
     body.replaceChildren();
     Calc.DAYS.forEach((day, d) => {
-      const row = el("tr", {}, el("th", { text: day }));
+      const row = el("tr", {}, el("th", {}, [el("span", { class: "day", text: day }), el("span", { class: "date" })]));
       for (let s = 0; s < 3; s++) {
         const index = d * 3 + s;
         const select = el("select", { "aria-label": Calc.mealLabel(index) });
@@ -93,6 +93,25 @@
         row.append(el("td", {}, [el("span", { class: "slot", text: Calc.SLOTS[s] }), select]));
       }
       body.append(row);
+    });
+    markCurrentMeal();
+  }
+
+  // 曜日の横に今週の日付を入れ、いま作れる食（直近の料理）を強調する
+  function markCurrentMeal() {
+    const now = new Date();
+    const dates = Calc.weekDates(now);
+    const current = Calc.currentMealIndex(now);
+    $("planBody").querySelectorAll("tr").forEach((row, d) => {
+      row.querySelector(".date").textContent = (dates[d].getMonth() + 1) + "/" + dates[d].getDate();
+      row.classList.toggle("today", d === Math.floor(current / 3));
+      row.querySelectorAll("td").forEach((cell, s) => {
+        const isCurrent = d * 3 + s === current;
+        cell.classList.toggle("current", isCurrent);
+        const badge = cell.querySelector(".now");
+        if (isCurrent && !badge) cell.append(el("span", { class: "now", text: "次に作る" }));
+        if (!isCurrent && badge) badge.remove();
+      });
     });
   }
 
@@ -245,4 +264,6 @@
   bindPlanButtons();
   renderInventory();
   renderResults();
+  // 食事の時間帯が切り替わったら強調も移す
+  setInterval(markCurrentMeal, 60 * 1000);
 })();

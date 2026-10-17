@@ -12,6 +12,28 @@
     return DAYS[Math.floor(index / 3)] + "曜" + SLOTS[index % 3];
   }
 
+  // ゲーム内の食事の時間帯: 朝 4:00〜11:59 / 昼 12:00〜17:59 / 夜 18:00〜翌3:59（週は月曜4:00に切り替わる）
+  const DAY_START_HOUR = 4;
+  const SLOT_START_HOURS = [4, 12, 18];
+
+  // 指定日時が今週の何食目（0=月曜朝 … 20=日曜夜）にあたるか
+  function currentMealIndex(date) {
+    const shifted = new Date(date.getTime() - DAY_START_HOUR * 3600 * 1000);
+    const dayIndex = (shifted.getDay() + 6) % 7;
+    const hour = date.getHours();
+    let slot = 2;
+    if (hour >= SLOT_START_HOURS[0] && hour < SLOT_START_HOURS[1]) slot = 0;
+    else if (hour >= SLOT_START_HOURS[1] && hour < SLOT_START_HOURS[2]) slot = 1;
+    return dayIndex * 3 + slot;
+  }
+
+  // 指定日時を含む週の月曜〜日曜の日付
+  function weekDates(date) {
+    const shifted = new Date(date.getTime() - DAY_START_HOUR * 3600 * 1000);
+    const monday = new Date(shifted.getFullYear(), shifted.getMonth(), shifted.getDate() - (shifted.getDay() + 6) % 7);
+    return DAYS.map((_, i) => new Date(monday.getFullYear(), monday.getMonth(), monday.getDate() + i));
+  }
+
   // 曜日・いいキャンプチケットを反映した鍋容量
   function potCapacity(base, dayIndex, campTicket) {
     let cap = base;
@@ -119,7 +141,7 @@
     return { used, capacity: bagCapacity, free: bagCapacity - used, surplus };
   }
 
-  const Calc = { DAYS, SLOTS, mealLabel, potCapacity, recipeSize, indexRecipes, requiredTotals, balance, simulate, isShort, substitutes, groupAlerts, groupSubstitutes, leftovers };
+  const Calc = { DAYS, SLOTS, mealLabel, currentMealIndex, weekDates, potCapacity, recipeSize, indexRecipes, requiredTotals, balance, simulate, isShort, substitutes, groupAlerts, groupSubstitutes, leftovers };
   if (typeof module !== "undefined" && module.exports) module.exports = Calc;
   else root.Calc = Calc;
 })(this);

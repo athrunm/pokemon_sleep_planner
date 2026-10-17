@@ -5,6 +5,7 @@
   --muted: #6b7785;
   --border: #d9dee6;
   --accent: #3b6fd8;
+  --accent-bg: #e8effc;
   --ok: #1e7d4f;
   --ok-bg: #e7f6ee;
   --ng: #c0392b;
@@ -19,6 +20,7 @@
     --muted: #9aa5b1;
     --border: #353c46;
     --accent: #7aa2f7;
+    --accent-bg: #1f2a40;
     --ok: #5fd39a;
     --ok-bg: #1d3329;
     --ng: #ff8a7a;
@@ -86,10 +88,16 @@ button.secondary { background: transparent; color: var(--text); }
 
 table { width: 100%; border-collapse: collapse; }
 th, td { padding: 6px; border-bottom: 1px solid var(--border); text-align: left; }
-.plan thead th:first-child { width: 2.5em; }
+.plan thead th:first-child { width: 3.5em; }
 .plan select { width: 100%; min-width: 0; font-size: 0.85rem; }
 .plan td { width: 31%; }
 .plan .slot { display: none; }
+.plan .date { display: block; color: var(--muted); font-size: 0.75rem; font-weight: normal; }
+.plan tr.today th { color: var(--accent); }
+.plan tr.today .date { color: var(--accent); font-weight: 600; }
+.plan td.current { background: var(--accent-bg); box-shadow: inset 0 0 0 2px var(--accent); border-radius: 6px; }
+.plan td.current select { border-color: var(--accent); font-weight: 600; }
+.plan .now { display: block; margin-top: 2px; color: var(--accent); font-size: 0.75rem; font-weight: 600; }
 .num { text-align: right; font-variant-numeric: tabular-nums; }
 
 .inventory {
@@ -140,7 +148,11 @@ footer { padding-bottom: 32px; }
   .plan tr { display: block; padding: 6px 0; border-bottom: 1px solid var(--border); }
   .plan th, .plan td { display: flex; align-items: center; gap: 8px; width: auto; border: 0; }
   .plan tbody th { display: block; width: auto; font-size: 0.95rem; }
-  .plan tbody th::after { content: "曜日"; }
+  .plan tbody th .day::after { content: "曜日"; }
+  .plan .date { display: inline; margin-left: 6px; font-size: 0.85rem; }
+  .plan td { flex-wrap: wrap; }
+  .plan td.current { padding: 6px; }
+  .plan .now { flex-basis: 100%; margin: 0 0 0 calc(1.5em + 8px); }
   .plan .slot { display: inline; flex: 0 0 1.5em; color: var(--muted); font-size: 0.85rem; }
   .plan select { flex: 1; }
 }
